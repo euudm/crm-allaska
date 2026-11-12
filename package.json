@@ -1,0 +1,12 @@
+{
+  "name": "allaska-crm",
+  "version": "1.0.0",
+  "description": "CRM central da Allaska — hub de vendas e ferramentas",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

@@ -1,0 +1,9 @@
+!.env.example
+*.log
+.DS_Store
+.env
+.env.*
+.netlify/
+__pycache__/
+dist/
+node_modules/
