@@ -270,7 +270,7 @@ async function carregarPlacar() {
     document.getElementById('placar-total').textContent = `${p.geral.responderam} de ${p.geral.contatados} responderam (${p.geral.taxa}%)`;
     el.querySelector('.placar-corpo').innerHTML =
       bloco('Por dia do envio', p.porDia, 7) + bloco('Por horário', p.porFaixa) + bloco('Por dia da semana', p.porDiaDaSemana) +
-      bloco('Por cidade', p.porCidade) + bloco('Por nicho', p.porNicho) + bloco('Por mensagem', p.porMensagem) +
+      bloco('Por cidade', p.porCidade) + bloco('Por nicho', p.porNicho) + bloco('Por site (conferido)', p.porSite || []) + bloco('Por mensagem', p.porMensagem) +
       (p.diasSemVigia.length ? `<p class="placar-nota">Fora da conta (ninguém lendo o WhatsApp nesses dias): ${p.diasSemVigia.map(d => `${d.dia.slice(8, 10)}/${d.dia.slice(5, 7)}`).join(', ')}.</p>` : '');
   } catch (e) {
     document.getElementById('placar-total').textContent = 'indisponível';
