@@ -61,6 +61,45 @@ app.delete('/api/cards/:id', (req, res) => {
   res.json({ ok: true });
 });
 
+// ── PROSPECTOR (ALLASKA/prospector) ─────────────────────────────
+// O vigia do WhatsApp do Kaptar manda aqui cada lead que respondeu. Id fixo "zap-<telefone>":
+// mandar de novo só atualiza. A coluna só é definida quando o card nasce (ou com forcarColuna),
+// pra não puxar de volta um card que o Diego arrastou.
+app.post('/api/prospector/card', (req, res) => {
+  const b = req.body || {};
+  const tel = String(b.tel || '').replace(/\D/g, '');
+  if (!tel) return res.status(400).json({ error: 'sem telefone' });
+  const data = load();
+  const id = `zap-${tel}`;
+  let card = data.cards.find(c => c.id === id);
+  const dados = {
+    origem: 'kaptar', nome: b.nome || tel, empresa: [b.nicho, b.cidade].filter(Boolean).join(' · '),
+    telefone: tel, previa: b.previa || '', quemFalouPorUltimo: b.quemFalouPorUltimo || '', tipo: b.tipo || '',
+    respondeuEm: b.respondeuEm || '', contatadoEm: b.contatadoEm || '', instagram: b.instagram || '', mapsUrl: b.mapsUrl || '',
+    cidade: b.cidade || '', aviso: b.aviso || '', siteUrl: b.siteUrl || (card && card.siteUrl) || '',
+  };
+  if (!card) {
+    card = { id, coluna: b.coluna || 'respondeu', email: '', valor: '', notas: '', criado: new Date().toISOString(), ...dados };
+    data.cards.push(card);
+  } else {
+    Object.assign(card, dados);
+    if (b.forcarColuna && b.coluna) card.coluna = b.coluna;
+  }
+  save(data);
+  res.json(card);
+});
+
+// Placar de resposta (calculado pelo prospector a partir dos arquivos dele e do Kaptar)
+app.get('/api/placar', async (req, res) => {
+  try {
+    const { pathToFileURL } = require('url');
+    const mod = await import(pathToFileURL(path.join(__dirname, '..', 'prospector', 'placar.mjs')).href + `?t=${Date.now()}`);
+    res.json(mod.calcular(Number(req.query.dias) || 30));
+  } catch (e) {
+    res.status(500).json({ error: 'prospector indisponível: ' + e.message });
+  }
+});
+
 const TOOL_BATS = {
   prospeccao:    'C:\\Users\\diego\\OneDrive\\Desktop\\ALLASKA\\ALLASKA-Sistemas\\sistemas\\prospeccao\\iniciar.bat',
   rastreamento:  'C:\\Users\\diego\\OneDrive\\Desktop\\ALLASKA\\ALLASKA-Sistemas\\sistemas\\rastreamento-concorrencia\\abrir.bat',
@@ -109,5 +148,6 @@ app.listen(PORT, () => {
   console.log('  ║         ALLASKA CRM — Online         ║');
   console.log(`  ║   http://localhost:${PORT}              ║`);
   console.log('  ╚══════════════════════════════════════╝\n');
-  require('child_process').exec(`start http://localhost:${PORT}`);
+  // SEM_ABRIR=1: sobe sem abrir o navegador (testes, ou quando o prospector liga o CRM em segundo plano)
+  if (!process.env.SEM_ABRIR) require('child_process').exec(`start http://localhost:${PORT}`);
 });

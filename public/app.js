@@ -1,6 +1,10 @@
 const COLUNAS = [
   { id: 'lead',       label: 'Lead',             cor: '#7c6ff7' },
   { id: 'contato',    label: 'Contato feito',    cor: '#00b4ff' },
+  // colunas do prospector (WhatsApp do Kaptar)
+  { id: 'respondeu',  label: 'Respondeu',        cor: '#4fd1c5' },
+  { id: 'comvoce',    label: 'É com você',       cor: '#ff6b9a' },
+  { id: 'site',       label: 'Site pronto',      cor: '#a3e635' },
   { id: 'proposta',   label: 'Proposta enviada', cor: '#ff9f43' },
   { id: 'negociando', label: 'Negociando',       cor: '#ffd32a' },
   { id: 'fechado',    label: 'Fechado',          cor: '#0be881' },
@@ -62,7 +66,13 @@ function render() {
     kanban.appendChild(colEl);
   });
 
-  // Drag & drop via delegation no kanban
+  // Drag & drop via delegation no kanban: liga UMA vez só (render roda de novo a cada atualização
+  // e, antes, cada render empilhava mais um listener: um arrastar virava vários PUT)
+  if (!kanban.dataset.ligado) { kanban.dataset.ligado = '1'; ligarArrastar(kanban); }
+  ligarCards();
+}
+
+function ligarArrastar(kanban) {
   kanban.addEventListener('dragover', e => {
     e.preventDefault();
     const target = e.target.closest('.col-cards');
@@ -88,7 +98,9 @@ function render() {
     draggedId = null;
     await load();
   });
+}
 
+function ligarCards() {
   // Card events
   document.querySelectorAll('.card').forEach(el => {
     el.addEventListener('dragstart', () => {
@@ -120,7 +132,51 @@ function render() {
     `${cards.length} lead${cards.length !== 1 ? 's' : ''}`;
 }
 
+const TIPO_ZAP = { saudacao: 'respondeu a saudação', nao: 'disse que não', sim: 'disse que pode', audio: 'mandou áudio', duvida: 'fora do roteiro', conversa: 'conversa' };
+
+function quando(iso) {
+  if (!iso) return '';
+  const d = new Date(iso), hoje = new Date();
+  const h = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  return d.toDateString() === hoje.toDateString() ? `hoje ${h}` : `${d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} ${h}`;
+}
+
+// Card que veio do prospector: mostra o que o lead falou por último e de quem é a vez.
+function renderCardZap(card) {
+  const vez = card.quemFalouPorUltimo === 'nos' ? 'esperando o lead' : 'lead esperando resposta';
+  return `
+    <div class="card card-zap" draggable="true" data-id="${card.id}" data-coluna="${card.coluna}">
+      <div class="card-top">
+        <div class="card-identity">
+          <div class="card-name">${esc(card.nome)}</div>
+          ${card.empresa ? `<div class="card-empresa">${esc(card.empresa)}</div>` : ''}
+        </div>
+        <div class="card-actions">
+          <button class="card-btn edit" data-id="${card.id}" title="Editar">✏</button>
+          <button class="card-btn delete" data-id="${card.id}" title="Remover">✕</button>
+        </div>
+      </div>
+      ${card.previa ? `<div class="zap-previa ${card.quemFalouPorUltimo === 'nos' ? 'nossa' : ''}">"${esc(card.previa)}"</div>` : ''}
+      <div class="zap-meta">
+        ${card.tipo ? `<span class="zap-tipo t-${esc(card.tipo)}">${esc(TIPO_ZAP[card.tipo] || card.tipo)}</span>` : ''}
+        <span class="zap-vez">${vez}</span>
+      </div>
+      ${card.aviso ? `<div class="card-notas">${esc(card.aviso)}</div>` : ''}
+      ${card.notas ? `<div class="card-notas">${esc(card.notas)}</div>` : ''}
+      <div class="card-footer">
+        <span class="card-date">respondeu ${esc(quando(card.respondeuEm))}</span>
+        <div class="card-quick">
+          ${card.siteUrl ? `<a class="quick-btn" href="${esc(card.siteUrl)}" target="_blank">Ver site</a>` : ''}
+          ${card.mapsUrl ? `<a class="quick-btn" href="${esc(card.mapsUrl)}" target="_blank" title="Abrir no Google Maps">Maps</a>` : ''}
+          ${card.instagram ? `<a class="quick-btn" href="${esc(card.instagram)}" target="_blank">Insta</a>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function renderCard(card) {
+  if (card.origem === 'kaptar') return renderCardZap(card);
   const dias = Math.floor((Date.now() - new Date(card.criado)) / 86400000);
   const dataStr = dias === 0 ? 'hoje' : dias === 1 ? 'há 1 dia' : `há ${dias} dias`;
 
@@ -203,6 +259,25 @@ function closeModal() {
   editingId = null;
 }
 
+// ── PLACAR DE RESPOSTA (prospector) ──────────────────────────
+async function carregarPlacar() {
+  const el = document.getElementById('placar');
+  try {
+    const p = await api('GET', `/api/placar?dias=${document.getElementById('placar-dias').value}`);
+    if (p.error) throw new Error(p.error);
+    const linha = (g) => `<tr><td>${esc(g.grupo)}</td><td>${g.responderam} de ${g.contatados}</td><td><span class="barra-taxa"><i style="width:${Math.min(100, g.taxa)}%"></i></span>${g.taxa}%</td></tr>`;
+    const bloco = (titulo, gs, max = 8) => gs.length ? `<div class="placar-bloco"><h4>${titulo}</h4><table>${gs.slice(0, max).map(linha).join('')}</table></div>` : '';
+    document.getElementById('placar-total').textContent = `${p.geral.responderam} de ${p.geral.contatados} responderam (${p.geral.taxa}%)`;
+    el.querySelector('.placar-corpo').innerHTML =
+      bloco('Por dia do envio', p.porDia, 7) + bloco('Por horário', p.porFaixa) + bloco('Por dia da semana', p.porDiaDaSemana) +
+      bloco('Por cidade', p.porCidade) + bloco('Por nicho', p.porNicho) + bloco('Por mensagem', p.porMensagem) +
+      (p.diasSemVigia.length ? `<p class="placar-nota">Fora da conta (ninguém lendo o WhatsApp nesses dias): ${p.diasSemVigia.map(d => `${d.dia.slice(8, 10)}/${d.dia.slice(5, 7)}`).join(', ')}.</p>` : '');
+  } catch (e) {
+    document.getElementById('placar-total').textContent = 'indisponível';
+    el.querySelector('.placar-corpo').innerHTML = `<p class="placar-nota">${esc(e.message)}</p>`;
+  }
+}
+
 // ── TOOLS STATUS ─────────────────────────────────────────────
 const toolStatus = {};
 
@@ -238,6 +313,11 @@ document.addEventListener('DOMContentLoaded', () => {
   load();
   checkToolStatus();
   setInterval(checkToolStatus, 30000);
+  // prospector: cards novos e placar atualizam sozinhos (o vigia lê o WhatsApp a cada 2 min)
+  carregarPlacar();
+  setInterval(() => { if (!document.querySelector('.card.dragging') && document.getElementById('modal-overlay').classList.contains('hidden')) load(); carregarPlacar(); }, 60000);
+  document.getElementById('placar-dias').addEventListener('change', carregarPlacar);
+  document.getElementById('placar-toggle').addEventListener('click', () => document.getElementById('placar').classList.toggle('aberto'));
 
   // Bloquear clique em ferramentas offline
   document.getElementById('tools-nav').addEventListener('click', e => {

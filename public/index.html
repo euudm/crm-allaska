@@ -100,6 +100,20 @@
         </div>
       </header>
 
+      <!-- Placar de resposta do prospector (WhatsApp do Kaptar) -->
+      <section id="placar">
+        <div class="placar-topo">
+          <button id="placar-toggle" type="button">Placar de resposta</button>
+          <span id="placar-total">carregando...</span>
+          <select id="placar-dias" title="Período">
+            <option value="7">7 dias</option>
+            <option value="30" selected>30 dias</option>
+            <option value="90">90 dias</option>
+          </select>
+        </div>
+        <div class="placar-corpo"></div>
+      </section>
+
       <div id="kanban"></div>
     </main>
   </div>
@@ -142,6 +156,9 @@
             <select id="f-coluna">
               <option value="lead">Lead</option>
               <option value="contato">Contato feito</option>
+              <option value="respondeu">Respondeu</option>
+              <option value="comvoce">É com você</option>
+              <option value="site">Site pronto</option>
               <option value="proposta">Proposta enviada</option>
               <option value="negociando">Negociando</option>
               <option value="fechado">Fechado</option>

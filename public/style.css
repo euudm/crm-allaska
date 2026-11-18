@@ -448,6 +448,38 @@ body {
 .card[data-coluna="negociando"] { border-left-color: var(--negociando); }
 .card[data-coluna="fechado"]    { border-left-color: var(--fechado); }
 .card[data-coluna="perdido"]    { border-left-color: var(--perdido); }
+.card[data-coluna="respondeu"]  { border-left-color: #4fd1c5; }
+.card[data-coluna="comvoce"]    { border-left-color: #ff6b9a; }
+.card[data-coluna="site"]       { border-left-color: #a3e635; }
+
+/* card do prospector: o que o lead falou por último */
+.zap-previa { font-size: 12px; line-height: 1.4; margin: 6px 0; padding: 6px 8px; border-radius: 6px; background: rgba(79,209,197,.08); color: var(--text); }
+.zap-previa.nossa { background: rgba(255,255,255,.04); color: var(--muted); }
+.zap-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 8px; font-size: 10.5px; }
+.zap-tipo { padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,.07); color: var(--text); }
+.zap-tipo.t-nao { background: rgba(255,94,87,.15); color: #ff8a84; }
+.zap-tipo.t-sim { background: rgba(163,230,53,.15); color: #b9f05f; }
+.zap-tipo.t-duvida, .zap-tipo.t-audio { background: rgba(255,107,154,.15); color: #ff8fb3; }
+.zap-vez { color: var(--muted); }
+
+/* placar de resposta */
+#placar { border-bottom: 1px solid var(--border); padding: 10px 24px; flex-shrink: 0; }
+.placar-topo { display: flex; align-items: center; gap: 12px; }
+#placar-toggle { background: none; border: 0; color: var(--text); font: inherit; font-weight: 600; font-size: 13px; cursor: pointer; padding: 4px 0; }
+#placar-toggle::before { content: "▸ "; color: var(--muted); }
+#placar.aberto #placar-toggle::before { content: "▾ "; }
+#placar-total { font-size: 13px; color: #4fd1c5; font-weight: 600; }
+#placar-dias { margin-left: auto; background: var(--col-bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 3px 6px; font-size: 12px; }
+.placar-corpo { display: none; gap: 14px; flex-wrap: wrap; padding: 10px 0 4px; max-height: 38vh; overflow-y: auto; }
+#placar.aberto .placar-corpo { display: flex; }
+.placar-bloco { background: var(--col-bg); border-radius: 10px; padding: 10px 12px; min-width: 230px; }
+.placar-bloco h4 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; }
+.placar-bloco table { border-collapse: collapse; font-size: 12px; width: 100%; }
+.placar-bloco td { padding: 3px 8px 3px 0; white-space: nowrap; }
+.placar-bloco td:first-child { max-width: 160px; overflow: hidden; text-overflow: ellipsis; }
+.barra-taxa { display: inline-block; width: 46px; height: 5px; background: var(--border); border-radius: 3px; margin-right: 6px; vertical-align: middle; overflow: hidden; }
+.barra-taxa i { display: block; height: 100%; background: #4fd1c5; }
+.placar-nota { font-size: 11.5px; color: var(--muted); width: 100%; }
 
 .card-top {
   display: flex;
