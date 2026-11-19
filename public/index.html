@@ -100,6 +100,23 @@
         </div>
       </header>
 
+      <!-- Etapas da operação (Kaptar -> resposta -> site -> proposta) + PARAR TUDO -->
+      <section id="etapas">
+        <ol class="etapas-trilha" id="etapas-trilha"></ol>
+        <div class="etapas-controle">
+          <span class="etapas-estado" id="etapas-estado"></span>
+          <button type="button" id="btn-comecar" class="btn-comecar" title="Dispara uma leva pela automação do Kaptar">▶ Começar leva</button>
+          <button type="button" id="btn-parar" class="btn-parar" title="Fecha o Kaptar e trava todo envio do prospector">■ PARAR TUDO</button>
+          <button type="button" id="btn-retomar" class="btn-retomar hidden" title="Destrava o prospector (o Kaptar você abre à mão)">▶ Retomar</button>
+        </div>
+      </section>
+
+      <!-- Levas de disparo: cada vez que o Kaptar dispara vira uma aba; "Todas" junta tudo -->
+      <section id="levas">
+        <span class="levas-rotulo">Levas</span>
+        <div class="levas-lista" id="levas-lista"></div>
+      </section>
+
       <!-- Placar de resposta do prospector (WhatsApp do Kaptar) -->
       <section id="placar">
         <div class="placar-topo">
@@ -175,6 +192,77 @@
           <button type="submit" class="btn-primary" id="btn-salvar">Salvar</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Começar uma leva: escolhe a automação do Kaptar, vê pra quem vai e confirma -->
+  <div id="com-overlay" class="hidden">
+    <div id="com">
+      <div class="modal-header">
+        <h2>Começar uma leva</h2>
+        <button class="modal-close" id="com-fechar">×</button>
+      </div>
+      <div class="resp-corpo">
+        <div class="form-group">
+          <label>Automação do Kaptar</label>
+          <select id="com-aut"></select>
+        </div>
+        <div class="form-group">
+          <label>Mensagem <span class="resp-dica">o Kaptar sorteia uma delas pra cada academia</span></label>
+          <div id="com-msgs" class="com-msgs"></div>
+          <div class="com-msg-acoes">
+            <button type="button" class="quick-btn" id="com-mais">+ variação</button>
+            <button type="button" class="quick-btn" id="com-saudacao"></button>
+            <span class="com-msg-status" id="com-msg-status"></span>
+            <button type="button" class="quick-btn responder" id="com-salvar-msg" disabled>Salvar no Kaptar</button>
+          </div>
+        </div>
+        <div class="com-resumo" id="com-resumo"></div>
+        <div class="form-group">
+          <label>Vai mandar pra <span class="resp-dica" id="com-qtd"></span></label>
+          <ol class="com-fila" id="com-fila"></ol>
+        </div>
+        <p class="resp-erro" id="com-erro"></p>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="com-cancelar">Cancelar</button>
+          <button type="button" class="btn-primary" id="com-ir" disabled>Começar agora</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Responder pelo WhatsApp do Kaptar (cards do prospector) -->
+  <div id="resp-overlay" class="hidden">
+    <div id="resp">
+      <div class="modal-header">
+        <h2 id="resp-titulo">Responder</h2>
+        <button class="modal-close" id="resp-fechar">×</button>
+      </div>
+      <div class="resp-corpo">
+        <div class="resp-falou" data-quem="Ele falou"><p id="resp-previa"></p></div>
+        <div class="form-group">
+          <label>Resposta pronta <span class="resp-dica">a marcada combina com o que ele falou</span></label>
+          <div class="resp-opcoes" id="resp-opcoes"></div>
+        </div>
+        <div class="form-group hidden" id="resp-link-grupo">
+          <label>Link do site</label>
+          <input type="text" id="resp-link" placeholder="https://nome-da-academia.netlify.app">
+        </div>
+        <div class="form-group" id="resp-antes-grupo">
+          <label>1ª mensagem <span class="resp-dica">opcional, apague se não quiser</span></label>
+          <textarea id="resp-antes" rows="2"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Mensagem</label>
+          <textarea id="resp-texto" rows="8"></textarea>
+        </div>
+        <p class="resp-nota">Sai pelo WhatsApp do Kaptar, digitando como gente: leva uns 30 a 60 segundos. Confira o texto antes.</p>
+        <p class="resp-erro" id="resp-erro"></p>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="resp-cancelar">Cancelar</button>
+          <button type="button" class="btn-primary" id="resp-enviar">Enviar pelo WhatsApp</button>
+        </div>
+      </div>
     </div>
   </div>
 

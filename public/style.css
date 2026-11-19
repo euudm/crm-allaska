@@ -452,6 +452,9 @@ body {
 .card[data-coluna="comvoce"]    { border-left-color: #ff6b9a; }
 .card[data-coluna="site"]       { border-left-color: #a3e635; }
 
+/* card aberto pelo link da ilha/aviso do prospector */
+.card.card-foco { box-shadow: 0 0 0 2px #4fd1c5, 0 0 28px rgba(79,209,197,.45); transition: box-shadow .4s; }
+
 /* card do prospector: o que o lead falou por último */
 .zap-previa { font-size: 12px; line-height: 1.4; margin: 6px 0; padding: 6px 8px; border-radius: 6px; background: rgba(79,209,197,.08); color: var(--text); }
 .zap-previa.nossa { background: rgba(255,255,255,.04); color: var(--muted); }
@@ -461,6 +464,75 @@ body {
 .zap-tipo.t-sim { background: rgba(163,230,53,.15); color: #b9f05f; }
 .zap-tipo.t-duvida, .zap-tipo.t-audio { background: rgba(255,107,154,.15); color: #ff8fb3; }
 .zap-vez { color: var(--muted); }
+
+/* etapas da operação + PARAR TUDO */
+#etapas { display: flex; align-items: center; gap: 18px; padding: 12px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0; background: linear-gradient(180deg, rgba(0,180,255,.04), transparent); }
+#etapas.parado { background: linear-gradient(180deg, rgba(255,94,87,.16), rgba(255,94,87,.04)); border-bottom-color: rgba(255,94,87,.5); }
+.etapas-trilha { list-style: none; display: flex; align-items: center; flex: 1; min-width: 0; margin: 0; padding: 0; }
+.etapa { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--col-bg); opacity: .55; transition: opacity .3s, border-color .3s; flex-shrink: 0; }
+.etapa.feita { opacity: 1; }
+.etapa.ativa { border-color: var(--accent); box-shadow: 0 0 0 1px rgba(0,180,255,.25), 0 0 18px rgba(0,180,255,.15); }
+.etapa.alerta { border-color: #ff6b9a; box-shadow: 0 0 0 1px rgba(255,107,154,.3); animation: etapaPulsa 2s ease-in-out infinite; }
+@keyframes etapaPulsa { 50% { box-shadow: 0 0 0 1px rgba(255,107,154,.3), 0 0 20px rgba(255,107,154,.3); } }
+.etapa-num { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; background: var(--border); color: var(--muted); }
+.etapa.feita .etapa-num { background: var(--accent); color: #001018; }
+.etapa.alerta .etapa-num { background: #ff6b9a; color: #1a0008; }
+.etapa-txt { display: flex; flex-direction: column; line-height: 1.25; }
+.etapa-txt b { font-size: 12.5px; font-weight: 600; color: var(--text); white-space: nowrap; }
+.etapa-txt em { font-style: normal; font-size: 11px; color: var(--muted); white-space: nowrap; }
+.etapa.alerta .etapa-txt em { color: #ff8fb3; }
+.etapa-valor { font-size: 20px; font-weight: 700; color: var(--text); margin-left: 4px; font-variant-numeric: tabular-nums; }
+.etapa-liga { flex: 1; min-width: 28px; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 0 6px; }
+.etapa-barra { width: 100%; height: 4px; border-radius: 4px; background: var(--border); overflow: hidden; }
+.etapa-barra i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #4fd1c5); border-radius: 4px; transition: width .6s ease; }
+.etapa-liga small { font-size: 10px; color: var(--muted); min-height: 12px; }
+.etapas-controle { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.etapas-estado { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+#etapas.parado .etapas-estado { color: #ff8a84; font-weight: 700; letter-spacing: .03em; }
+.btn-parar { background: #e5342b; color: #fff; border: 0; border-radius: 8px; padding: 10px 16px; font: inherit; font-size: 13px; font-weight: 800; letter-spacing: .04em; cursor: pointer; box-shadow: 0 0 0 2px rgba(229,52,43,.25); }
+.btn-parar:hover { background: #ff4136; box-shadow: 0 0 0 3px rgba(229,52,43,.4); }
+.btn-parar:disabled { opacity: .7; cursor: wait; }
+.btn-retomar { background: transparent; color: #0be881; border: 1px solid #0be881; border-radius: 8px; padding: 9px 14px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.btn-retomar:hover { background: rgba(11,232,129,.1); }
+@media (max-width: 1250px) { .etapa-txt em { display: none; } .etapa { padding: 7px 9px; } }
+
+/* botão Começar leva + janela */
+.btn-comecar { background: rgba(11,232,129,.12); color: #0be881; border: 1px solid rgba(11,232,129,.55); border-radius: 8px; padding: 9px 14px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.btn-comecar:hover { background: rgba(11,232,129,.2); }
+.btn-comecar:disabled { opacity: .45; cursor: not-allowed; }
+#com-aut { width: 100%; background: var(--col-bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; font: inherit; font-size: 13px; }
+.com-resumo { font-size: 12.5px; line-height: 1.55; color: var(--muted); background: var(--col-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+.com-resumo b { color: var(--text); font-weight: 600; }
+.com-resumo .com-alerta { color: #ffb86b; display: block; margin-top: 4px; }
+.com-msgs { display: flex; flex-direction: column; gap: 6px; }
+.com-msg { display: flex; gap: 6px; align-items: center; }
+.com-msg input { flex: 1; background: var(--col-bg); color: var(--text); border: 1px solid var(--border); border-radius: 7px; padding: 8px 10px; font: inherit; font-size: 13px; }
+.com-msg input.errada { border-color: #ffb86b; }
+.com-msg button { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 15px; padding: 0 4px; }
+.com-msg button:hover { color: #ff5e57; }
+.com-msg-acoes { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.com-msg-status { font-size: 11.5px; color: var(--muted); margin-left: auto; }
+.com-msg-status.ok { color: #0be881; }
+.com-msg-status.pendente { color: #ffb86b; }
+.com-fila { margin: 0; padding: 0 0 0 22px; max-height: 240px; overflow-y: auto; font-size: 13px; line-height: 1.7; color: var(--text); }
+.com-fila small { color: var(--muted); margin-left: 6px; }
+.com-fila .com-vazia { list-style: none; margin-left: -22px; color: var(--muted); }
+
+/* levas de disparo */
+#levas { display: flex; align-items: center; gap: 12px; padding: 8px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.levas-rotulo { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); flex-shrink: 0; }
+.levas-lista { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: thin; padding-bottom: 2px; min-width: 0; }
+.leva-chip { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; flex-shrink: 0; background: var(--col-bg); border: 1px solid var(--border); border-radius: 9px; padding: 6px 12px; color: var(--text); font: inherit; cursor: pointer; text-align: left; transition: border-color .2s, background .2s; }
+.leva-chip:hover { border-color: #3a3a58; }
+.leva-chip b { font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.leva-chip small { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.leva-chip small em { font-style: normal; color: #ff8fb3; font-weight: 600; }
+.leva-chip.tem-espera { border-color: rgba(255,107,154,.45); }
+.leva-chip.sel { background: rgba(0,180,255,.12); border-color: var(--accent); }
+.leva-chip.sel small { color: #9fdcff; }
+.leva-viva { width: 8px; height: 8px; border-radius: 50%; background: #0be881; box-shadow: 0 0 0 0 rgba(11,232,129,.6); animation: levaViva 1.6s infinite; }
+@keyframes levaViva { 70% { box-shadow: 0 0 0 7px rgba(11,232,129,0); } 100% { box-shadow: 0 0 0 0 rgba(11,232,129,0); } }
+.card-leva { margin-left: 6px; font-size: 10px; font-weight: 600; color: #8fa2ff; background: rgba(124,111,247,.14); border-radius: 4px; padding: 1px 5px; vertical-align: 1px; }
 
 /* placar de resposta */
 #placar { border-bottom: 1px solid var(--border); padding: 10px 24px; flex-shrink: 0; }
@@ -722,6 +794,47 @@ body {
   gap: 8px;
   padding-top: 2px;
 }
+
+/* ─── RESPONDER (prospector) ─────────────────── */
+#resp-overlay, #com-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex;
+  align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(5px);
+}
+#resp-overlay.hidden, #com-overlay.hidden { display: none; }
+#resp, #com {
+  background: #15152a; border: 1px solid var(--border); border-radius: 14px; width: 560px;
+  max-width: 95vw; max-height: 92vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.resp-corpo { padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; }
+.resp-falou { border-left: 3px solid #4fd1c5; padding: 4px 0 4px 12px; }
+.resp-falou::before { content: attr(data-quem); display: block; font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+.resp-falou p { font-size: 13.5px; line-height: 1.45; color: var(--text); }
+.resp-dica { font-weight: 400; opacity: .7; margin-left: 4px; }
+.resp-nota { font-size: 11.5px; color: var(--muted); line-height: 1.4; }
+.resp-erro { font-size: 12.5px; color: #ff8a84; line-height: 1.4; }
+.resp-erro:empty { display: none; }
+#resp-enviar:disabled { opacity: .6; cursor: progress; }
+.resp-opcoes { display: flex; flex-wrap: wrap; gap: 6px; }
+.resp-opcoes button {
+  background: var(--col-bg); border: 1px solid var(--border); color: var(--muted); font: inherit; font-size: 12px;
+  padding: 6px 10px; border-radius: 6px; cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+}
+.resp-opcoes button:hover { color: var(--text); border-color: rgba(79,209,197,.5); }
+.resp-opcoes button.ativo { background: rgba(79,209,197,.16); border-color: #4fd1c5; color: #4fd1c5; }
+.form-group.hidden { display: none; }
+
+/* card do prospector fechado: só o nome + Ver mais / Responder */
+.zap-ok { font-size: 11px; font-weight: 600; color: #34d27b; background: rgba(52,210,123,.12); border: 1px solid rgba(52,210,123,.35); padding: 2px 7px; border-radius: 5px; white-space: nowrap; }
+.zap-acoes .responder { margin-left: auto; }
+.card-tel { font-size: 11.5px; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; letter-spacing: .2px; }
+.card-zap .zap-detalhes { display: none; margin-top: 6px; }
+.card-zap.aberto .zap-detalhes { display: block; }
+.zap-acoes { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px; }
+.zap-mais { background: none; border: none; color: var(--muted); font: inherit; font-size: 11.5px; cursor: pointer; padding: 2px 0; }
+.zap-mais:hover { color: var(--text); text-decoration: underline; }
+
+.quick-btn.responder { background: rgba(79,209,197,.14); color: #4fd1c5; border: 1px solid rgba(79,209,197,.35); cursor: pointer; font-family: inherit; }
+.quick-btn.responder:hover { background: rgba(79,209,197,.24); }
 
 /* ─── TOOL OFFLINE ───────────────────────────── */
 .tool-row.offline .tool-link {
