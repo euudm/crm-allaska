@@ -225,7 +225,10 @@ function ligarCards() {
     `${cards.length} lead${cards.length !== 1 ? 's' : ''}`;
 }
 
-const TIPO_ZAP = { saudacao: 'respondeu a saudação', nao: 'disse que não', sim: 'disse que pode', audio: 'mandou áudio', duvida: 'fora do roteiro', conversa: 'conversa' };
+const TIPO_ZAP = { saudacao: 'respondeu a saudação', nao: 'disse que não', sim: 'pediu o site', audio: 'mandou áudio', duvida: 'pergunta / fora do roteiro', conversa: 'conversa',
+  op_horario: 'opinião: horário', op_valor: 'opinião: valor', op_ambos: 'opinião: os dois', op_outro: 'opinião: outra coisa',
+  quem: 'perguntou quem é', preco: 'perguntou o preço', jatem: 'já tem site',
+  atendente: 'atendente', repassa: 'atendente vai repassar', podefalar: 'pode falar comigo' };
 
 function quando(iso) {
   if (!iso) return '';
@@ -379,9 +382,11 @@ function respostaSugerida(c) {
   if (c.quemFalouPorUltimo === 'nos') return c.siteUrl ? 'cobrar' : 'assunto';
   if (c.tipo === 'sim') return c.siteUrl ? 'link' : 'separar';
   if (c.tipo === 'audio') return 'audio';
-  if (c.tipo === 'nao') return 'nao';
+  if (c.tipo === 'nao') return 'r_nao';
+  if (c.tipo === 'jatem') return 'r_jatem';
+  if (c.tipo === 'preco') return 'preco';
   if (c.tipo === 'conversa') return 'gostou';
-  return 'assunto';
+  return 'assunto'; // próximo passo do roteiro (pergunta, ponte, quem é você...)
 }
 
 function escolherResposta(id) {
